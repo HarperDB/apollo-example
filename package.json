@@ -1,0 +1,9 @@
+{
+  "name": "application-template",
+  "version": "1.0.0",
+  "description": "A template for building HarperDB applications",
+  "type": "module",
+  "dependencies": {
+    "harperdb-apollo": "1.0.0"
+  }
+}
