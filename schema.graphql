@@ -1,10 +1,49 @@
-## Here we can define any tables in our database. This example shows how we define a type as a table using
-## the type name as the table name and specifying it is an "export" available in the REST and other external protocols.
-type TableName @table @export {
-    id: ID @primaryKey # Here we define primary key (must be one)
-    name: String # we can define any other attributes here
-    tag: String @indexed # we can specify any attributes that should be indexed
+
+type Dog @table(database: "demo")  @export {
+    id: Int! @primaryKey
+    name: String @indexed
+    breedName: String! @indexed
+    breed: Breed @relationship(from: breedName)
+    dob: Date
 }
+
+type Breed @table(database: "demo", expiration: 3600) @export {
+    name: ID @primaryKey
+    image_link: String
+    good_with_children: Int
+    good_with_other_dogs: Int
+    shedding: Int
+    grooming: Int
+    drooling: Int
+    coat_length: Int
+    good_with_strangers: Int
+    playfulness: Int
+    protectiveness: Int
+    trainability: Int
+    energy: Int
+    barking: Int
+    min_life_expectancy: Int
+    max_life_expectancy: Int
+    max_height_male: Int
+    max_height_female: Int
+    max_weight_male: Int
+    max_weight_female: Int
+    min_height_male: Int
+    min_height_female: Int
+    min_weight_male: Int
+    min_weight_female: Int
+    dogs: [Dog] @relationship(to: breedName)
+}
+
 type Query {
-    tableName(id: ID): TableName
+    dogs: [Dog]
+    dog(id: Int!): Dog
+    dogsByBreedName(breedName: String!): [Dog]
+    breeds: [Breed]
+    breed(name: String!): Breed
+}
+
+type Mutation {
+    putDog(id: Int!, name: String, breedName: String!, dob: Date): Dog
+    deleteDog(id: Int!): Dog
 }

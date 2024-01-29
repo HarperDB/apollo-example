@@ -9,3 +9,11 @@ This is a template for building and using Apollo applications in [HarperDB](http
 The [schema.graphql](./schema.graphql) is the schema definition. This is the main starting point for defining your database schema and Apollo endpoints, specifying which tables you want and what attributes/fields they should have, and which queries can be made with Apollo.
 
 The [resolvers.js](./resolvers.js) provides a template for defining Apollo resolvers.
+
+#### NOTE: If you want to connect to the Apollo sandbox you will need to turn on CORS in HarperDB like the following:
+```yaml
+http:
+  cors: true
+  corsAccessList:
+    - "*"
+```
