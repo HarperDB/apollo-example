@@ -4,6 +4,6 @@
   "description": "A template for building HarperDB applications",
   "type": "module",
   "dependencies": {
-    "harperdb-apollo": "git+https://github.com/HarperDB-Add-Ons/apollo-example.git"
+    "harperdb-apollo": "https://github.com/HarperDB-Add-Ons/apollo.git"
   }
 }
