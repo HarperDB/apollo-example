@@ -7,6 +7,8 @@ graphqlSchema:  # These reads GraphQL schemas to define the schema of database/t
   # path: / # exported queries are on the root path by default
 jsResource: # Loads JavaScript modules such that their exports are exported as resources
   files: resources.js # the entry module for resources
-harperdb-apollo:
-  package: harperdb-apollo
+'@harperdb/apollo':
+  package: '@harperdb/apollo'
   files: '*.{graphql,js}'
+  resolvers: 'resolvers.js'
+  schemas: '*.graphql'

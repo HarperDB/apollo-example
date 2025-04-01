@@ -1,9 +1,9 @@
 {
-  "name": "application-template",
-  "version": "1.0.0",
+  "name": "apollo-example",
+  "version": "1.0.1",
   "description": "A template for building HarperDB applications",
   "type": "module",
   "dependencies": {
-    "harperdb-apollo": "https://github.com/HarperDB-Add-Ons/apollo.git"
+    "@harperdb/apollo": "^1.0.0"
   }
 }
