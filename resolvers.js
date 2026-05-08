@@ -1,4 +1,4 @@
-import { tables, databases } from 'harper';
+import { databases } from 'harper';
 const { Dog, Breed } = databases.demo;
 
 /** Here we can define Apollo resolvers */
@@ -18,10 +18,10 @@ const resolvers = {
 			return Dog.get({ id: args.id, select: createSelect(info?.fieldNodes["0"]?.selectionSet?.selections) });
 		},
 		dogsByBreedName: async (parent, args, context, info) => {
-			//here we show how to delegate authorization to harperdb
-			//this line instructs HarperDB to authorize the search on the context
+			//here we show how to delegate authorization to harper
+			//this line instructs Harper to authorize the search on the context
 			context.authorize = true;
-			//passing the context gives further instructions to HarperDB, in this case telling it to authorize the search
+			//passing the context gives further instructions to Harper, in this case telling it to authorize the search
 			return Dog.search({
 				conditions: [
 					{ attribute: 'breedName', value: args.breedName, comparator: 'equal' }
