@@ -4,7 +4,8 @@
   "description": "A template for building HarperDB applications",
   "type": "module",
   "dependencies": {
-    "@harperdb/apollo": "^1.1.0"
+    "@harperdb/apollo": "^1.1.0",
+    "harper": "^5.0.11"
   },
   "license": "Apache-2.0"
 }
