@@ -4,7 +4,8 @@
   "description": "A template for building HarperDB applications",
   "type": "module",
   "scripts": {
-    "test": "HARPER_INTEGRATION_TEST_INSTALL_SCRIPT=./node_modules/harper/dist/bin/harper.js harper-integration-test-run --isolation=none \"integrationTests/**/*.test.ts\""
+    "test": "HARPER_INTEGRATION_TEST_INSTALL_SCRIPT=./node_modules/harper/dist/bin/harper.js harper-integration-test-run --isolation=none \"integrationTests/**/*.test.ts\"",
+    "test:integration": "harper-integration-test-run --isolation=none \"integrationTests/**/*.test.ts\""
   },
   "dependencies": {
     "@harperdb/apollo": "^1.1.0",
