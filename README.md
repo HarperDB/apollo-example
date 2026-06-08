@@ -1,6 +1,6 @@
 # Harper-Apollo Application Template
 
-This is a template for building and using Apollo applications in [Harper](https://www.harper.fast/). You can download this repository as a starting point for building Apollo applications with Harper. To get started, make sure you have [installed Harper](https://docs.Harper.io/docs/install-Harper), which can be quickly done with `npm install -g harper`. You can run your application from the directory where you downloaded the contents of this repository with:
+This is a template for building and using Apollo applications in [Harper](https://www.harperdb.io/). You can download this repository as a starting point for building Apollo applications with Harper. To get started, make sure you have [installed Harper](https://docs.harperdb.io/docs/install-harper), which can be quickly done with `npm install -g harper`. You can run your application from the directory where you downloaded the contents of this repository with:
 
 `harper dev /path/to/apollo-example`
 

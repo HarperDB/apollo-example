@@ -5,8 +5,12 @@ const { Breed } = databases.demo;
 const API_URL = 'https://api.api-ninjas.com/v1/dogs?name=';
 const API_KEY = 'XXXXXXXXXXXXXXXXXXXXXXXXXX';
 class BreedResource extends Resource {
-  static async get(target) {
-    let name = (typeof target === 'string' ? target : target.id).toLowerCase();
+  // Cache source: Breed.sourcedFrom(BreedResource) resolves each id by instantiating
+  // this resource and calling the INSTANCE get(query). A static get() would never be
+  // invoked by the cache, so it must remain an instance method (matches Harper's own
+  // SimpleCacheSource reference).
+  async get(query) {
+    let name = this.getId().toLowerCase();
 
     let response = await fetch(API_URL + name, { headers: { 'X-Api-Key': API_KEY } });
     let data = await response.json();
