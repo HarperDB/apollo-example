@@ -58,7 +58,9 @@ const resolvers = {
 			return args;
 		},
 		deleteDog: async (parent, args, context, info) => {
-			return Dog.delete(args.id);
+			const dog = await Dog.get(args.id);
+			await Dog.delete(args.id);
+			return dog;
 		}
 	},
 
