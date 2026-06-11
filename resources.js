@@ -13,6 +13,7 @@ class BreedResource extends Resource {
     let name = this.getId().toLowerCase();
 
     let response = await fetch(API_URL + name, { headers: { 'X-Api-Key': API_KEY } });
+    if (!response.ok) return undefined;
     let data = await response.json();
     let detail;
 

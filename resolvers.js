@@ -30,7 +30,7 @@ const resolvers = {
 			}, context);
 		},
 		breeds: async (parent, args, context, info) => {
-			let conditions = generateConditions(args?.dog);
+			let conditions = generateConditions(args?.breed);
 			let search = { select: createSelect(info?.fieldNodes["0"]?.selectionSet?.selections) };
 			if (conditions.length > 0) {
 				search.operator = conditions.length > 1 ? 'or' : 'and';
@@ -87,6 +87,7 @@ function generateConditions(args, prefix = [], conditions = []) {
 }
 
 function createSelect(selections, relationshipName, select = []) {
+	if (!selections) return select;
 	let relation;
 	if (relationshipName) {
 		relation = { name: relationshipName, select: [] };

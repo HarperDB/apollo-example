@@ -133,7 +133,8 @@ suite('GraphQL API', (ctx: ContextWithHarper) => {
     // confirm the record is gone. The deleteDog resolver returns Dog.delete()'s result
     // (no record body), so we assert the effect via a follow-up query rather than the
     // mutation's selection set.
-    await gql(httpURL, auth, 'mutation { deleteDog(id: 4242) { id } }');
+    const del = await gql(httpURL, auth, 'mutation { deleteDog(id: 4242) { id } }');
+    ok(!del.errors, `deleteDog mutation errored: ${JSON.stringify(del.errors)}`);
 
     const gone = await gql(httpURL, auth, '{ dog(id: 4242) { id } }');
     strictEqual(gone.data.dog, null, 'dog should be gone after deleteDog');
