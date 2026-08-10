@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@harperdb/apollo": "^1.1.0",
-    "harper": "^5.0.10"
+    "harper": "^5.2.1"
   },
   "devDependencies": {
     "@harperfast/integration-testing": "^0.3.1",
