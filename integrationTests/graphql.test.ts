@@ -9,6 +9,7 @@ import { setupHarperWithFixture, teardownHarper, type ContextWithHarper } from '
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
+import { existsSync } from 'node:fs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const fixtureDir = resolve(__dirname, '..');
@@ -18,6 +19,15 @@ const fixtureDir = resolve(__dirname, '..');
 // Resolve the CLI from the exported main entry and pass it explicitly.
 const require = createRequire(import.meta.url);
 const harperBinPath = resolve(dirname(require.resolve('harper')), 'bin/harper.js');
+// The path above encodes harper's current internal layout (main entry at dist/index.js, CLI
+// alongside it at dist/bin/harper.js). If harper ever moves either one, fail here with a
+// message that says so, rather than letting the harness die at startup on a missing binary.
+if (!existsSync(harperBinPath)) {
+  throw new Error(
+    `harper CLI not found at ${harperBinPath}. This path is derived from ` +
+      `require.resolve('harper') + 'bin/harper.js'; harper's package layout has probably changed.`,
+  );
+}
 
 function basicAuth(username: string, password: string): string {
   return 'Basic ' + Buffer.from(`${username}:${password}`).toString('base64');
@@ -28,13 +38,16 @@ async function gql(
   auth: string,
   query: string,
   variables?: Record<string, unknown>,
-): Promise<{ data: Record<string, unknown>; errors?: unknown[] }> {
+): Promise<{ status: number; data: Record<string, unknown>; errors?: unknown[] }> {
   const res = await fetch(`${httpURL}/graphql`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: auth },
     body: JSON.stringify({ query, variables }),
   });
-  return res.json() as Promise<{ data: Record<string, unknown>; errors?: unknown[] }>;
+  // Surface the HTTP status alongside the payload so tests that only care about the
+  // transport can use this helper too, instead of hand-rolling the fetch.
+  const body = await res.json() as { data: Record<string, unknown>; errors?: unknown[] };
+  return { status: res.status, ...body };
 }
 
 suite('GraphQL API', (ctx: ContextWithHarper) => {
@@ -81,29 +94,23 @@ suite('GraphQL API', (ctx: ContextWithHarper) => {
     const auth = basicAuth(admin.username, admin.password);
 
     // This resolver uses context.authorize = true which delegates auth to Harper.
-    // The query runs and returns a result or an auth error — either is valid here.
-    const res = await fetch(`${httpURL}/graphql`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: auth },
-      body: JSON.stringify({ query: '{ dogsByBreedName(breedName: "labrador") { id name breedName } }' }),
-    });
+    // The query runs and returns a result or an auth error — either is valid here, so this
+    // asserts only the transport.
+    const result = await gql(httpURL, auth, '{ dogsByBreedName(breedName: "labrador") { id name breedName } }');
 
-    strictEqual(res.status, 200, 'GraphQL endpoint should return HTTP 200');
+    strictEqual(result.status, 200, 'GraphQL endpoint should return HTTP 200');
   });
 
   test('GraphQL endpoint returns 200 for an introspection query', async () => {
     const { admin, httpURL } = ctx.harper;
     const auth = basicAuth(admin.username, admin.password);
 
-    const res = await fetch(`${httpURL}/graphql`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: auth },
-      body: JSON.stringify({ query: '{ __schema { queryType { name } } }' }),
-    });
+    const result = await gql(httpURL, auth, '{ __schema { queryType { name } } }');
 
-    strictEqual(res.status, 200);
-    const body = await res.json() as { data: { __schema: { queryType: { name: string } } } };
-    strictEqual(body.data.__schema.queryType.name, 'Query');
+    strictEqual(result.status, 200);
+    ok(!result.errors, `introspection errored: ${JSON.stringify(result.errors)}`);
+    const schema = result.data.__schema as { queryType: { name: string } };
+    strictEqual(schema.queryType.name, 'Query');
   });
 
   // Exercises a real Harper DB write -> read -> read-back-through-GraphQL -> delete cycle
